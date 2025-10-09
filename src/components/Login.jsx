@@ -35,7 +35,7 @@ const Login = () => {
       setLoading(true);
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       alert("Login successfully");
-      navigate("/dashboard");
+      navigate("/Dashboard");
     } catch (err) {
       console.error("Login error:", err.code, err.message);
 

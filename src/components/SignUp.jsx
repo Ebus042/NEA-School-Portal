@@ -152,7 +152,7 @@ const SignUp = () => {
           className="w-full text-gray-700 p-2 rounded mb-5 border"
         >
           <option value="Admin">Admin</option>
-          <option value="Lecturer">Lecturer</option>
+          <option value="Staff">Staff</option>
           <option value="Student">Student</option>
         </select>
 
