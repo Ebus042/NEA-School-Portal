@@ -7,8 +7,10 @@ import { getDoc, doc } from "firebase/firestore";
 import DashboardLayout from "../dashboards/DashboardLayout";
 import UserInfo from "../dashboards/UserInfo";
 import RecentActivity from "../dashboards/RecentActivity";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
+  const { logout } = useAuth();
   const [userData, setUserData] = useState(null);
   const [loadingData, setLoadingData] = useState(true);
   const [roleContent, setRoleContent] = useState({ stats: [], activities: [] });
@@ -43,9 +45,15 @@ const Dashboard = () => {
     };
 
     fetchUserData();
-  }, [user, navigate]);
-  if (!user || loadingData)
-    return <p className="text-center mt-20">Loading...</p>;
+
+    const logoutTimer = setTimeout(() => {
+      logout();
+      navigate("/login");
+    }, 5000);
+    return () => clearTimeout(logoutTimer);
+  }, [user, navigate, logout]);
+  // if (!user || loadingData)
+  //   return <p className="text-center mt-20">Loading...</p>;
 
   return (
     <DashboardLayout>

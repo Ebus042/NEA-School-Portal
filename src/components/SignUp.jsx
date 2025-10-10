@@ -1,5 +1,5 @@
 import { useState } from "react";
-import loginBgImg from "../assets/bg-logo.jpg";
+import homepageBg from "../assets/School-bg.jpg";
 import signUpImg from "../assets/signUp-bg.jpg";
 import {
   createUserWithEmailAndPassword,
@@ -8,6 +8,7 @@ import {
 import { auth, db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { UserPlus, Info } from "lucide-react";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -77,37 +78,57 @@ const SignUp = () => {
 
   return (
     <div
-      className="min-h-screen bg-contain flex justify-center items-center"
-      style={{ backgroundImage: `url(${loginBgImg})` }}
+      className="min-h-screen bg-center flex justify-center items-center"
+      style={{ backgroundImage: `url(${homepageBg})` }}
     >
       <form
         onSubmit={handleSignUp}
-        className="w-full mx-5 max-w-md bg-cover p-8 mt-5 text-white opacity-80 rounded shadow-2xl"
-        style={{ backgroundImage: `url(${signUpImg})` }}
+        className="w-full mx-5 max-w-md bg-white p-8 mt-5  text-gray-900 rounded shadow-2xl"
+        // style={{ backgroundImage: `url(${signUpImg})` }}
       >
-        <h2 className="text-3xl uppercase font-semibold mb-6 text-center">
+        <h2 className="text-center mb-1 font-bold uppercase text-xl">
+          Admission Portal
+        </h2>
+
+        <div
+          className="bg-[#ffaa33] mb-8 shadow-md border-l-[#ff9500] border-l-4
+         px-4 py-4 flex justify-between gap-5 items-center rounded-md "
+        >
+          <span className="text-[#663c00]">
+            <Info size={50} />
+          </span>
+
+          <div>
+            <h4 className="text-2xl lg:text-lg mb-3 font-semibold">Notice:</h4>
+            <p className="text-[12px] text-[#8e580d]">
+              Sign up with your information as shown on your certificate
+            </p>
+          </div>
+        </div>
+
+        <h2 className="text-xl uppercase font-semibold mb-2 text-center">
           Create Account
         </h2>
 
         {/* Full Name */}
-        <label className="block mb-1 text-lg">Full Name</label>
+        <label className="block mb-1">Full Name</label>
         <input
           onChange={handleChange}
           value={formData.fullname}
           name="fullname"
-          className="w-full text-red-700 text-sm p-2 rounded mb-5 border"
+          className="w-full text-red-700 text-sm py-1 px-2 rounded mb-2 border border-gray-700"
           type="text"
           placeholder="Enter Full Name"
           required
         />
 
         {/* Email */}
-        <label className="block mb-1 text-lg">Email Address</label>
+        <label className="block mb-1">Email Address</label>
         <input
           value={formData.email}
           onChange={handleChange}
           name="email"
-          className="w-full text-red-700 p-2 rounded mb-5 border"
+          className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
           type="email"
           placeholder="Enter Email"
           required
@@ -117,24 +138,24 @@ const SignUp = () => {
         )}
 
         {/* Password */}
-        <label className="block mb-1 text-lg">Create Password</label>
+        <label className="block mb-1">Create Password</label>
         <input
           onChange={handleChange}
           name="password"
           value={formData.password}
-          className="w-full text-red-700 p-2 rounded mb-5 border"
+          className="w-full text-red-700 px-2 py-1 rounded mb-2 border border-gray-700"
           type="password"
           placeholder="Create New Password"
           required
         />
 
         {/* Confirm Password */}
-        <label className="block mb-1 text-lg">Confirm Password</label>
+        <label className="block mb-1">Confirm Password</label>
         <input
           onChange={handleChange}
           value={formData.confirmPassword}
           name="confirmPassword"
-          className="w-full text-red-700 p-2 rounded mb-5 border"
+          className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
           type="password"
           placeholder="Confirm Password"
           required
@@ -144,12 +165,12 @@ const SignUp = () => {
         )}
 
         {/* Role */}
-        <label className="block mb-1 text-lg">Role</label>
+        <label className="block mb-1">Role</label>
         <select
           value={formData.role}
           name="role"
           onChange={handleChange}
-          className="w-full text-gray-700 p-2 rounded mb-5 border"
+          className="w-full text-gray-700 py-1 px-2 rounded mb-2 border border-gray-700"
         >
           <option value="Admin">Admin</option>
           <option value="Staff">Staff</option>
@@ -165,25 +186,39 @@ const SignUp = () => {
         <button
           type="submit"
           disabled={loading}
-          className={`w-full py-2 text-xl rounded transition duration-500 ease-in-out text-white ${
+          className={`w-full py-1 px-2 rounded mt-5 transition duration-500 ease-in-out text-white ${
             loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gray-500 hover:bg-gray-700"
+              ? "bg-[#0f9c37] cursor-not-allowed"
+              : "bg-[#0f9c37] hover:bg-[#106e1d] font-bold"
           }`}
         >
           {loading ? "Creating Account..." : "Sign Up"}
         </button>
 
         {/* Sign In Link */}
-        <p className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <a
+        <div className="flex justify-between items-center gap-5 mt-4">
+          <p className="mt-4 text-center lg:text-sm">
+            Already have an account?{" "}
+          </p>
+          <div
             onClick={() => navigate("/login")}
-            className="text-blue-200 hover:underline ml-1 text-lg"
+            className="flex items-center cursor-pointer md:max-w-40 lg:max-w-48
+             w-full bg-[#17b6a4] rounded-lg py-2"
           >
-            Sign In
-          </a>
-        </p>
+            <button
+              className="text-white text-lg relative font-bold flex
+             rounded-md ml-4 "
+            >
+              Sign In
+            </button>
+            <span
+              className="absolute right-16  md:right-[29%] lg:right-[36%]
+             text-white font-bold"
+            >
+              <UserPlus />
+            </span>
+          </div>
+        </div>
       </form>
     </div>
   );
