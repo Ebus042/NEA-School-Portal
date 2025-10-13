@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { menuItems } from "../../data";
 import { LogOut, Menu, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const SideBar = () => {
@@ -47,14 +47,26 @@ const SideBar = () => {
         {/* Menu Items */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {menuItems.map((item) => (
-            <button
+            <NavLink
               key={item.id}
               onClick={() => setIsOpen(false)}
-              className="flex items-center w-full p-2 hover:bg-gray-100 rounded transition"
+              to={
+                item.title === "Dashboard"
+                  ? "/dashboard"
+                  : `/dashboard/${item.title.toLowerCase()}`
+              }
+              end={item.title === "Dashboard"}
+              className={({ isActive }) =>
+                `flex items-center w-full p-2 rounded transition ${
+                  isActive
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`
+              }
             >
               <span className="mr-3">{item.icon}</span>
               {item.title}
-            </button>
+            </NavLink>
           ))}
         </nav>
 

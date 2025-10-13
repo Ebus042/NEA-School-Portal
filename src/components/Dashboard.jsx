@@ -3,8 +3,17 @@ import { dashboardData } from "../../data";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { getDoc, doc } from "firebase/firestore";
-import DashboardLayout from "../dashboards/DashboardLayout";
+import {
+  getDoc,
+  doc,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  onSnapshot,
+} from "firebase/firestore";
+import { logActivity } from "../Utils/activityServices";
 import UserInfo from "../dashboards/UserInfo";
 import RecentActivity from "../dashboards/RecentActivity";
 import { useAuth } from "../context/AuthContext";
@@ -12,16 +21,20 @@ import { useAuth } from "../context/AuthContext";
 const Dashboard = () => {
   const { logout } = useAuth();
   const [userData, setUserData] = useState(null);
-  const [loadingData, setLoadingData] = useState(true);
+  const [activities, setActivities] = useState([]); // ✅ new state
   const [roleContent, setRoleContent] = useState({ stats: [], activities: [] });
-
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
+  // 🔥 Main useEffect
   useEffect(() => {
     if (!user) {
       navigate("/login");
       return;
+    }
+
+    if (auth.currentUser) {
+      logActivity(auth.currentUser.uid, "Opened Dashboard");
     }
 
     const fetchUserData = async () => {
@@ -34,11 +47,9 @@ const Dashboard = () => {
         const data = userDoc.data();
         setUserData(data);
 
-        // Get role-based stats and activities from data.js
+        // role-based dashboard stats
         const role = data.role?.toLowerCase();
         setRoleContent(dashboardData[role] || dashboardData["student"]);
-
-        setLoadingData(false);
       } catch (err) {
         console.error("Error fetching user data:", err);
       }
@@ -46,19 +57,38 @@ const Dashboard = () => {
 
     fetchUserData();
 
+    // 🟢 Step (c): Real-time activity listener
+    const q = query(
+      collection(db, "activities"),
+      where("userId", "==", user.uid),
+      orderBy("timestamp", "desc"),
+      limit(5)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedActivities = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setActivities(fetchedActivities);
+    });
+
     const logoutTimer = setTimeout(() => {
       logout();
       navigate("/login");
-    }, 5000);
-    return () => clearTimeout(logoutTimer);
+    }, 300000);
+
+    // Cleanup
+    return () => {
+      clearTimeout(logoutTimer);
+      unsubscribe();
+    };
   }, [user, navigate, logout]);
-  // if (!user || loadingData)
-  //   return <p className="text-center mt-20">Loading...</p>;
 
   return (
-    <DashboardLayout>
-      {/*Stats Card */}
-      <div className="grid lg:grid-cols-4 gap-6 my-2">
+    <div className="mb-32">
+      {/* Stats */}
+      <div className="grid lg:grid-cols-4 gap-6 mx-5 my-2">
         {roleContent.stats.map((stat, i) => (
           <div
             key={i}
@@ -70,13 +100,13 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* user info and activity */}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* User Info + Activities */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 mx-5 gap-6">
         <UserInfo user={userData} />
-        <RecentActivity activities={roleContent.activities} />
+        {/* ✅ Use real activities from Firestore */}
+        <RecentActivity activities={activities} />
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

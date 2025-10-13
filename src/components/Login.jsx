@@ -1,4 +1,5 @@
-import loginImg from "../assets/login-bg.jpg";
+import { logActivity } from "../Utils/activityServices";
+
 import homepageBg from "../assets/School-bg.jpg";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -37,11 +38,12 @@ const Login = () => {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      await logActivity(auth.currentUser.uid, "User logged in successfully");
       setMessage("Logged in successfully🎉🎉");
       setTimeout(() => {
         setMessage("");
-        navigate("/Dashboard");
-      }, 20000);
+        navigate("/dashboard");
+      }, 2000);
     } catch (err) {
       console.error("Login error:", err.code, err.message);
 
@@ -70,6 +72,7 @@ const Login = () => {
      flex justify-center items-center"
       style={{ backgroundImage: `url(${homepageBg})` }}
     >
+      <div className="absolute inset-0 bg-white opacity-70"></div>
       {message && (
         <div
           className="absolute bg-black/30 inset-0 backdrop-blur-sm z-10
@@ -87,7 +90,7 @@ const Login = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full   mx-5 max-w-md bg-white py-4 px-6 text-gray-900 rounded shadow-2xl"
+        className="w-full z-10  mx-5 max-w-md bg-white py-4 px-6 text-gray-900 rounded shadow-2xl"
         // style={{ backgroundImage: `url(${loginImg})` }}
       >
         <h2 className="text-center mb-1 font-bold uppercase text-xl">
@@ -106,7 +109,8 @@ const Login = () => {
             </h4>
             <p className="text-[12px] text-[#8e580d]">
               Enter the email address and password provided during sign-up, if
-              you do not have an account, click on SIGN UP
+              you do not have an account, click on{" "}
+              <strong className="">SIGN UP</strong>
             </p>
           </div>
         </div>
@@ -181,17 +185,17 @@ const Login = () => {
           </p>
           <div
             onClick={() => navigate("/signup")}
-            className="flex items-center cursor-pointer md:max-w-40 lg:max-w-48
+            className="flex items-center justify-between px-2 cursor-pointer md:max-w-40 lg:max-w-48
              w-full bg-[#17b6a4] rounded-lg py-2"
           >
             <button
-              className="text-white text-lg relative font-bold flex
-             rounded-md ml-4 "
+              className="text-white text-lg font-bold flex
+             rounded-md"
             >
               Sign Up
             </button>
             <span
-              className="absolute right-16  md:right-[29%] lg:right-[36%]
+              className="
              text-white font-bold"
             >
               <UserPlus />

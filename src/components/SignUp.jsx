@@ -1,6 +1,5 @@
 import { useState } from "react";
 import homepageBg from "../assets/School-bg.jpg";
-import signUpImg from "../assets/signUp-bg.jpg";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -17,6 +16,12 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
     role: "Student",
+    department: "",
+    level: "",
+    studentId: "",
+    staffId: "",
+    position: "",
+    adminId: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,7 +42,6 @@ const SignUp = () => {
 
     const { fullname, email, password, confirmPassword, role } = formData;
 
-    // Validate password match
     if (password !== confirmPassword) {
       setErrors({ confirmPassword: "Passwords do not match" });
       setLoading(false);
@@ -45,7 +49,7 @@ const SignUp = () => {
     }
 
     try {
-      // Create user with Firebase Auth
+      // Create user
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -53,20 +57,23 @@ const SignUp = () => {
       );
       const user = userCredentials.user;
 
-      // Save user info to Firestore
+      // Save user info in Firestore
       await setDoc(doc(db, "users", user.uid), {
         fullname,
         email,
         role,
+        password,
+        department: formData.department || null,
+        level: formData.level || null,
+        studentId: formData.studentId || null,
+        staffId: formData.staffId || null,
+        position: formData.position || null,
+        adminId: formData.adminId || null,
         createdAt: new Date(),
       });
 
-      // Send verification email
       await sendEmailVerification(user);
-
-      alert(
-        "✅ Account created! A verification email has been sent to your inbox. Please verify before signing in."
-      );
+      alert("✅ Account created! Please verify your email before logging in.");
       navigate("/login");
     } catch (err) {
       console.error("Signup Error:", err.message);
@@ -83,21 +90,16 @@ const SignUp = () => {
     >
       <form
         onSubmit={handleSignUp}
-        className="w-full mx-5 max-w-md bg-white p-8 mt-5  text-gray-900 rounded shadow-2xl"
-        // style={{ backgroundImage: `url(${signUpImg})` }}
+        className="w-full mx-5 max-w-md bg-white p-8 mt-5 text-gray-900 rounded shadow-2xl"
       >
         <h2 className="text-center mb-1 font-bold uppercase text-xl">
           Admission Portal
         </h2>
 
-        <div
-          className="bg-[#ffaa33] mb-8 shadow-md border-l-[#ff9500] border-l-4
-         px-4 py-4 flex justify-between gap-5 items-center rounded-md "
-        >
+        <div className="bg-[#ffaa33] mb-8 shadow-md border-l-[#ff9500] border-l-4 px-4 py-4 flex gap-5 items-center rounded-md">
           <span className="text-[#663c00]">
             <Info size={50} />
           </span>
-
           <div>
             <h4 className="text-2xl lg:text-lg mb-3 font-semibold">Notice:</h4>
             <p className="text-[12px] text-[#8e580d]">
@@ -133,9 +135,6 @@ const SignUp = () => {
           placeholder="Enter Email"
           required
         />
-        {errors.email && (
-          <p className="mb-2 text-sm text-red-300">{errors.email}</p>
-        )}
 
         {/* Password */}
         <label className="block mb-1">Create Password</label>
@@ -161,7 +160,7 @@ const SignUp = () => {
           required
         />
         {errors.confirmPassword && (
-          <p className="mb-2 text-sm text-red-300">{errors.confirmPassword}</p>
+          <p className="mb-2 text-sm text-red-500">{errors.confirmPassword}</p>
         )}
 
         {/* Role */}
@@ -172,17 +171,95 @@ const SignUp = () => {
           onChange={handleChange}
           className="w-full text-gray-700 py-1 px-2 rounded mb-2 border border-gray-700"
         >
-          <option value="Admin">Admin</option>
-          <option value="Staff">Staff</option>
           <option value="Student">Student</option>
+          <option value="Staff">Staff</option>
+          <option value="Admin">Admin</option>
         </select>
 
-        {/* General Error */}
-        {errors.general && (
-          <p className="text-red-400 mb-4 text-center">{errors.general}</p>
+        {/* Dynamic Fields Based on Role */}
+        {formData.role === "Student" && (
+          <>
+            <label className="block mb-1">Department</label>
+            <input
+              name="department"
+              onChange={handleChange}
+              value={formData.department}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Department"
+              required
+            />
+
+            <label className="block mb-1">Level</label>
+            <input
+              name="level"
+              onChange={handleChange}
+              value={formData.level}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Level"
+              required
+            />
+
+            <label className="block mb-1">Student ID</label>
+            <input
+              name="studentId"
+              onChange={handleChange}
+              value={formData.studentId}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Student ID"
+              required
+            />
+          </>
         )}
 
-        {/* Submit Button */}
+        {formData.role === "Staff" && (
+          <>
+            <label className="block mb-1">Department</label>
+            <input
+              name="department"
+              onChange={handleChange}
+              value={formData.department}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Department"
+              required
+            />
+
+            <label className="block mb-1">Staff ID</label>
+            <input
+              name="staffId"
+              onChange={handleChange}
+              value={formData.staffId}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Staff ID"
+              required
+            />
+
+            <label className="block mb-1">Position</label>
+            <input
+              name="position"
+              onChange={handleChange}
+              value={formData.position}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Position"
+              required
+            />
+          </>
+        )}
+
+        {formData.role === "Admin" && (
+          <>
+            <label className="block mb-1">Admin ID</label>
+            <input
+              name="adminId"
+              onChange={handleChange}
+              value={formData.adminId}
+              className="w-full text-red-700 py-1 px-2 rounded mb-2 border border-gray-700"
+              placeholder="Enter Admin ID"
+              required
+            />
+          </>
+        )}
+
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
@@ -195,26 +272,17 @@ const SignUp = () => {
           {loading ? "Creating Account..." : "Sign Up"}
         </button>
 
-        {/* Sign In Link */}
+        {/* Link to Login */}
         <div className="flex justify-between items-center gap-5 mt-4">
           <p className="mt-4 text-center lg:text-sm">
-            Already have an account?{" "}
+            Already have an account?
           </p>
           <div
             onClick={() => navigate("/login")}
-            className="flex items-center cursor-pointer md:max-w-40 lg:max-w-48
-             w-full bg-[#17b6a4] rounded-lg py-2"
+            className="flex items-center cursor-pointer w-full bg-[#17b6a4] rounded-lg py-2 px-2 justify-between"
           >
-            <button
-              className="text-white text-lg relative font-bold flex
-             rounded-md ml-4 "
-            >
-              Sign In
-            </button>
-            <span
-              className="absolute right-16  md:right-[29%] lg:right-[36%]
-             text-white font-bold"
-            >
+            <button className="text-white text-lg font-bold">Sign In</button>
+            <span className="text-white font-bold">
               <UserPlus />
             </span>
           </div>

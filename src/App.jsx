@@ -4,6 +4,9 @@ import SignUp from "./components/SignUp";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
 import ForgotPassword from "./components/ForgottenPassword";
+import Profile from "./pages/Profile";
+import DashboardLayout from "./dashboards/DashboardLayout";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -16,14 +19,21 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected Dashboard Route */}
+
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          {/* Nested Routes - these display inside DashboardLayout */}
+          <Route index element={<Dashboard />} /> {/* Default page */}
+          <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          {/* You can add more later like settings */}
+        </Route>
       </Routes>
     </>
   );
