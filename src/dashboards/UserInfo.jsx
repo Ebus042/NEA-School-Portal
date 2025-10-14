@@ -36,7 +36,7 @@ const UserInfo = () => {
     <div className="bg-white p-6 rounded-xl shadow mb-6">
       <h2 className="text-xl font-semibold mb-4">User Info</h2>
 
-      <ul className="space-y-2 text-gray-500">
+      <ul className="space-y-4 text-gray-900">
         <li>
           <strong>Name:</strong> {userData.fullname}
         </li>
@@ -48,13 +48,14 @@ const UserInfo = () => {
         {userData.role === "Student" && (
           <>
             <li>
-              <strong>Department:</strong> {userData.department || "N/A"}
+              <strong>Department: </strong> {userData.department || "N/A"}
             </li>
             <li>
-              <strong>Level:</strong> {userData.level || "N/A"}
+              <strong>Level: </strong> {userData.level || "N/A"}
             </li>
             <li>
-              <strong>Student ID:</strong> {userData.studentId || "N/A"}
+              <strong>Student ID: </strong>{" "}
+              {userData.studentId.toUpperCase() || "N/A"}
             </li>
           </>
         )}
@@ -63,7 +64,8 @@ const UserInfo = () => {
         {userData.role === "Staff" && (
           <>
             <li>
-              <strong>Staff ID:</strong> {userData.staffId || "N/A"}
+              <strong>Staff ID:</strong>{" "}
+              {userData.staffId.toUpperCase() || "N/A"}
             </li>
             <li>
               <strong>Position:</strong> {userData.position || "N/A"}

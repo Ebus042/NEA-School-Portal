@@ -26,6 +26,7 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   // Handle input changes
@@ -73,7 +74,7 @@ const SignUp = () => {
       });
 
       await sendEmailVerification(user);
-      alert("✅ Account created! Please verify your email before logging in.");
+      setMessage("✅ Account created successfully.");
       navigate("/login");
     } catch (err) {
       console.error("Signup Error:", err.message);
@@ -88,6 +89,20 @@ const SignUp = () => {
       className="min-h-screen bg-center flex justify-center items-center"
       style={{ backgroundImage: `url(${homepageBg})` }}
     >
+      {message && (
+        <div
+          className="absolute bg-black/30 inset-0 backdrop-blur-sm z-10
+        transition-all duration-300"
+        ></div>
+      )}
+      {message && (
+        <div
+          className="absolute bg-green-300 z-20 text-gray-700 border border-gray-300
+        px-6 py-4 rounded-lg shadow-lg text-center animate-fade-in"
+        >
+          <p>{message}</p>
+        </div>
+      )}
       <form
         onSubmit={handleSignUp}
         className="w-full mx-5 max-w-md bg-white p-8 mt-5 text-gray-900 rounded shadow-2xl"

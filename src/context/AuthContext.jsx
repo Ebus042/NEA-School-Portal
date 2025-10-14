@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         setCurrentUser(user);
 
-        // ✅ Start listening to Firestore user document
+        // Start listening to Firestore user document
         const userRef = doc(db, "users", user.uid);
         unsubscribeUser = onSnapshot(userRef, (docSnap) => {
           if (docSnap.exists()) {
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    // ✅ Proper cleanup for both listeners
+    // Proper cleanup for both listeners
     return () => {
       unsubscribeAuth();
       if (unsubscribeUser) unsubscribeUser();
